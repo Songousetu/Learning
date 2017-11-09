@@ -15,3 +15,4 @@ import matplotlib.pyplot as plt
 # print(normMat, ranges, minVals)
 
 KNN.datingClassTest('datingTestSet2.txt')
+kkkkk
