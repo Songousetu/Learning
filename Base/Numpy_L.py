@@ -45,4 +45,91 @@ D *= 3  # 更改数组中的元素
 A += B
 B.sum(axis=0) # 每一列的总和 指定axis参数你可以把运算应用到数组置顶的轴上
 B.min(axis=1) # 每一行的最小值
-kkkkk
+B.cumsum(axis=1) # 每行的累加 cumulative sum along each row
+exp(B) # 各个元素以e为底的指数函数
+sqrt(B) # 各个元素的平方
+add(A,B) # 加法
+'''更多函数alltrue, any, apply along axis, argmax, argmin, argsort, average,
+bincount, ceil, clip, conj, conjugate, corrcoef, cov, cross, cumprod,
+cumsum, diff, dot, floor, inner, inv, lexsort, max, maximum, mean, median,
+ min, minimum, nonzero, outer, prod, re, round, sometrue, sort, std,
+ sum, trace, transpose, var, vdot, vectorize, where
+ https://docs.scipy.org/doc/numpy/reference/routines.html'''
+
+'''索引，切片和迭代'''
+a = arange(10)**3 #array([  0,   1,   8,  27,  64, 125, 216, 343, 512, 729])
+a[2] # 8
+a[:6:2] = -1000 #equivalent to a[0:6:2] = -1000; from start to position 6, exclusive, set every 2nd element to -1000,
+                #array([-1000,     1, -1000,    27, -1000,   125,   216,   343,   512,   729])
+a[: : -1] # reversed a,倒过来
+# array([  729,   512,   343,   216,   125, -1000,    27, -1000,     1, -1000])
+# for i in a :
+ #   print (i**(1/3.)) #nan 1.0 nan 3.0 nan 5.0 6.0 7.0 8.0 9.0 开三次方，结果为浮点型
+
+'''多维数组可以每个轴有一个索引。这些索引由一个逗号分割的元组给出'''
+
+def f(x,y):
+    return 10*x+y
+b = fromfunction(f,(5,4),dtype=int)
+'''
+array([[ 0,  1,  2,  3],
+       [10, 11, 12, 13],
+       [20, 21, 22, 23],
+       [30, 31, 32, 33],
+       [40, 41, 42, 43]])
+'''
+b[2,3] # 23 第三行的第四列
+b[0:5,1] #each row in the second column of b, 1到5行的第二列（不包括第六行）
+b[:, 1]  # 所有行的第二列
+b[1:3, : ] # 第2，3行 的所有列
+b[-1]   # the last row. Equivalent to b[-1,:],最后一行
+#当少于轴数的索引被提供时，确失的索引被认为是整个切片：
+
+'''b[i]中括号中的表达式被当作i和一系列:，来代表剩下的轴。NumPy也允许你使用“点”像b[i,...]。
+点(…)代表许多产生一个完整的索引元组必要的分号。如果x是秩为5的数组(即它有5个轴)，那么:
+
+x[1,2,…] 等同于 x[1,2,:,:,:],
+x[…,3] 等同于 x[:,:,:,:,3]
+x[4,…,5,:] 等同 x[4,:,:,5,:].
+'''
+for element in b.flat:
+    print (element)
+     # 想对每个数组中元素进行运算，我们可以使用flat属性，该属性是数组元素的一个迭代器:
+'''newaxis,添加新维度的
+   ndenumerate,enumerate函数用于遍历序列中的元素以及它们的下标
+   indices,
+   index，监测是否存在，定位
+'''
+
+'''更改数组的形状'''
+a = floor(10*random.random((3,4)))
+'''   array([[ 7.,  5.,  9.,  3.],
+       [ 7.,  2.,  7.,  8.],
+       [ 6.,  8.,  3.,  2.]])
+'''
+a.shape # (3,4)
+a.ravel() # array([ 7.,  5.,  9.,  3.,  7.,  2.,  7.,  8.,  6.,  8.,  3.,  2.])# flatten the array
+a.shape = (6, 2) #改变参数的形状并返回它，
+a.transpose() # array([[ 7.,  9.,  7.,  7.,  6.,  3.],[ 5.,  3.,  2.,  8.,  8.,  2.]])
+a.reshape((2,6))#改变参数的形状并返回它，
+a.resize((2,6)) #改变数组自身，
+'''组合(stack)不同的数组'''
+a = floor(10*random.random((2,2))) #array([[ 1.,  1.],[ 5.,  8.]])
+b = floor(10*random.random((2,2))) # array([[ 3.,  3.],[ 6.,  0.]])
+vstack((a,b)) # 纵向相加
+'''array([[ 1.,  1.],
+       [ 5.,  8.],
+       [ 3.,  3.],
+       [ 6.,  0.]])'''
+hstack((a,b)) # 横向相加,column_stack((a,b)) 也是如此，with 2D arrays
+'''array([[ 1.,  1.,  3.,  3.],
+       [ 5.,  8.,  6.,  0.]]) '''
+''''''
+a=array([4.,2.])
+b=array([2.,8.])
+a[:,newaxis]  # This allows to have a 2D columns vector, array([[ 4.],[ 2.]])
+column_stack((a[:,newaxis],b[:,newaxis])) #array([[ 4.,  2.],[ 2.,  8.]])
+vstack((a[:,newaxis],b[:,newaxis])) # The behavior of vstack is different,array([[ 4.],[ 2.],[ 2.],[ 8.]])
+#对那些维度比二维更高的数组，hstack沿着第二个轴组合，vstack沿着第一个轴组合,concatenate允许可选参数给出组合时沿着的轴
+#在复杂情况下，r_[]和c_[]对创建沿着一个方向组合的数很有用，它们允许范围符号(“:”):
+r_[1:4,0,4] # array([1, 2, 3, 0, 4]),合并从1到4的数，再加上0和4
