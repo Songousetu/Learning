@@ -133,3 +133,110 @@ vstack((a[:,newaxis],b[:,newaxis])) # The behavior of vstack is different,array(
 #对那些维度比二维更高的数组，hstack沿着第二个轴组合，vstack沿着第一个轴组合,concatenate允许可选参数给出组合时沿着的轴
 #在复杂情况下，r_[]和c_[]对创建沿着一个方向组合的数很有用，它们允许范围符号(“:”):
 r_[1:4,0,4] # array([1, 2, 3, 0, 4]),合并从1到4的数，再加上0和4
+#当使用数组作为参数时，r_和c_的默认行为和vstack和hstack很像，但是允许可选的参数给出组合所沿着的轴的代号。
+
+'''将一个数组分割(split)成几个小数组,
+使用hsplit你能将数组沿着它的水平轴分割，或者指定返回相同形状数组的个数，或者指定在哪些列后发生分割:'''
+a = floor(10*random.random((2,12)))
+hsplit(a,3) # # Split a into 3,
+'''[array([[ 8.,  8.,  3.,  9.],
+       [ 0.,  3.,  2.,  9.]]), array([[ 0.,  4.,  3.,  0.],
+       [ 6.,  0.,  4.,  5.]]), array([[ 0.,  6.,  4.,  4.],
+       [ 7.,  5.,  1.,  4.]])]'''
+hsplit(a,(3,4))   # Split a after the third and the fourth column
+'''[array([[ 8.,  8.,  3.],
+       [ 0.,  3.,  2.]]), array([[ 9.],
+       [ 9.]]), array([[ 0.,  4.,  3.,  0.,  0.,  6.,  4.,  4.],
+       [ 6.,  0.,  4.,  5.,  7.,  5.,  1.,  4.]])] '''
+# vsplit沿着纵向的轴分割，array split允许指定沿哪个轴分割。
+
+'''复制和视图，有三种情况'''
+# 完全不拷贝，简单的赋值不拷贝数组对象或他们的数据
+a = arange(12)
+b = a            # no new object is created
+b is a           #调用 True  a and b are two names for the same ndarray object
+b.shape = 3,4    # changes the shape of a
+a.shape  #(3, 4)
+# Python 传递不定对象作为参考4，所以函数调用不拷贝数组。
+#视图(view)和浅复制，不同的数组对象分享同一个数据，视图方式创建一个新的数组对象指向同一数据
+c = a.view()
+c is a #False
+c.base is a       #True                 # c is a view of the data owned by a
+c.flags.owndata #False
+
+c.shape = 2,6                      # a's shape doesn't change
+a.shape  # (3, 4)
+c[0,4] = 1234                      # a's data changes
+print (a)
+'''array([[   0,    1,    2,    3],
+       [1234,    5,    6,    7],
+       [   8,    9,   10,   11]])
+'''
+# 切片数组返回它的一个视图：
+s = a[ : , 1:3] # spaces added for clarity; could also be written "s = a[:,1:3]"
+s[:] = 10 # s[:] is a view of s. Note the difference between s=10 and s[:]=10
+print (a)
+'''array([[   0,   10,   10,    3],
+       [1234,   10,   10,    7],
+       [   8,   10,   10,   11]])
+'''
+# 深复制，完全复制数组和它的数据
+d = a.copy()  # a new array object with new data is created
+d is a # False
+d.base is a         # False     d doesn't share anything with a
+d[0, 0] = 9999 # 不会改变a
+'''array([[   0,   10,   10,    3],
+       [1234,   10,   10,    7],
+       [   8,   10,   10,   11]])
+'''
+
+'''各种索引'''
+#数组索引
+a = arange(12)**2                          # the first 12 square numbers
+i = array( [ 1,1,3,8,5 ] )                 # an array of indices
+a[i]  # array([ 1,  1,  9, 64, 25])
+j = array( [ [ 3, 4], [ 9, 7 ] ] )         # a bidimensional array of indices
+a[j]         # the same shape as j
+# array([[ 9, 16],
+#       [81, 49]])
+# 以下示例通过将图片标签用调色版转换成色彩图像展示了这种行为。
+palette = array( [ [0,0,0],                # black
+        [255,0,0],              # red
+        [0,255,0],              # green
+        [0,0,255],              # blue
+        [255,255,255] ] )       # white
+
+image = array( [ [ 0, 1, 2, 0 ],           # each value corresponds to a color in the palette
+               [ 0, 3, 4, 0 ]  ] )
+palette[image]
+# 结果：生成多维数组如下，
+array([[[  0,   0,   0],
+        [255,   0,   0],
+        [  0, 255,   0],
+        [  0,   0,   0]],
+       [[  0,   0,   0],
+        [  0,   0, 255],
+        [255, 255, 255],
+        [  0,   0,   0]]])
+# 我们也可以给出不止一维的索引，每一维的索引数组必须有相同的形状
+a = arange(12).reshape(3,4)
+array([[ 0,  1,  2,  3],
+       [ 4,  5,  6,  7],
+       [ 8,  9, 10, 11]])
+i = array( [ [0,1],  [1,2] ] )         # indices for the first dim of a
+j = array( [ [2,1],  [3,3] ] )                    # indices for the second dim
+a[i,j]  # i and j must have equal shape
+array([[ 2,  5],
+       [ 7, 11]])
+a[i,2]
+array([[ 2,  6],
+       [ 6, 10]])
+
+a[:,j]  # 每一行 i.e., a[ : , j]
+# 结果：
+array([[[ 2,  1],
+        [ 3,  3]],
+       [[ 6,  5],
+        [ 7,  7]],
+       [[10,  9],
+        [11, 11]]])
