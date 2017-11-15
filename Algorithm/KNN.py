@@ -97,5 +97,7 @@ def datingClassTest(filename):
 
 ''' 测试正确率'''
 def classifyPerson():
-    resultList = ['not at all','in small doses','']
+    resultList = ['not at all','in small doses','in large doses']
+    percentTats= float()
+
 
